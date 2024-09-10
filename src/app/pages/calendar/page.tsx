@@ -1,6 +1,16 @@
 "use client";
+
+import DatePicker, {
+  months,
+} from "@/app/components/_organisms/DatePicker/DatePicker";
+import GuestSelector from "@/app/components/_organisms/GuestSelector/GuestSelector";
 import Modal from "@/app/components/_organisms/Modal/Modal";
 import { useState } from "react";
+
+const today = new Date();
+const todayDate = today.getDate();
+const todayMonth = today.getMonth();
+const todayYear = today.getFullYear();
 
 const CalendarPage: React.FC = () => {
   const [calendarPopUp, setCalendarPopUp] = useState<boolean>(false);
@@ -13,28 +23,10 @@ const CalendarPage: React.FC = () => {
   const [adults, setAdults] = useState<number>(0);
   const [children, setChildren] = useState<number>(0);
   const [pets, setPets] = useState<number>(0);
-
   const [currentMonth, setCurrentMonth] = useState<number>(8);
   const [currentYear, setCurrentYear] = useState<number>(2024);
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const daysInMonth = (month: number, year: number) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
+  const totalGuests = adults + children + pets;
 
   const handleDayClick = (day: number) => {
     if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
@@ -59,6 +51,7 @@ const CalendarPage: React.FC = () => {
 
   const handleRequest = () => {
     setModalOpen(true);
+    clearAll();
   };
 
   const handlePrevMonth = () => {
@@ -79,8 +72,6 @@ const CalendarPage: React.FC = () => {
     }
   };
 
-  const totalGuests = adults + children + pets;
-
   return (
     <div className="relative mx-auto w-full max-w-md shadow-lg bg-white p-6 rounded-lg">
       <div className="flex justify-between">
@@ -96,60 +87,21 @@ const CalendarPage: React.FC = () => {
       </div>
 
       {calendarPopUp && (
-        <div className="mt-5 bg-white rounded-lg shadow-md p-4">
-          <div className="flex justify-between mb-4 items-center">
-            <button onClick={handlePrevMonth} className="text-2xl">
-              &lt;
-            </button>
-            <p className="text-lg text-center">
-              {months[currentMonth]} {currentYear}
-            </p>
-            <button onClick={handleNextMonth} className="text-2xl">
-              &gt;
-            </button>
-          </div>
-          <div className="grid grid-cols-7 gap-2 text-center">
-            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, idx) => (
-              <p key={idx} className="text-gray-500">
-                {day}
-              </p>
-            ))}
-            {Array.from(
-              { length: daysInMonth(currentMonth, currentYear) },
-              (_, i) => i + 1
-            ).map((day) => (
-              <div
-                key={day}
-                className={`p-2 text-center cursor-pointer rounded-full 
-                ${
-                  selectedStartDate === day || selectedEndDate === day
-                    ? "bg-black text-white"
-                    : selectedStartDate &&
-                      day > selectedStartDate &&
-                      (!selectedEndDate || day < selectedEndDate)
-                    ? "bg-gray-300"
-                    : "bg-white"
-                }`}
-                onClick={() => handleDayClick(day)}
-              >
-                {day}
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <button className="text-gray-500 underline" onClick={resetDates}>
-                Reset
-              </button>
-            </div>
-            <button
-              onClick={() => setCalendarPopUp(false)}
-              className="bg-black text-white px-4 py-2 rounded-full"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        <DatePicker
+          calendarPopUp={calendarPopUp}
+          setCalendarPopUp={setCalendarPopUp}
+          currentMonth={currentMonth}
+          currentYear={currentYear}
+          selectedStartDate={selectedStartDate}
+          selectedEndDate={selectedEndDate}
+          handleDayClick={handleDayClick}
+          handlePrevMonth={handlePrevMonth}
+          handleNextMonth={handleNextMonth}
+          resetDates={resetDates}
+          todayDate={todayDate}
+          todayMonth={todayMonth}
+          todayYear={todayYear}
+        />
       )}
 
       <div className="flex justify-between mt-5">
@@ -163,71 +115,17 @@ const CalendarPage: React.FC = () => {
       </div>
 
       {guestsPopUp && (
-        <div className="mt-5 bg-white rounded-lg shadow-md p-4">
-          <div className="flex justify-between mb-4">
-            <p className="text-lg">Adults</p>
-            <div className="flex items-center space-x-2">
-              <button
-                className="bg-gray-300 px-2 py-1 rounded-full"
-                onClick={() => setAdults(Math.max(0, adults - 1))}
-              >
-                -
-              </button>
-              <span>{adults}</span>
-              <button
-                className="bg-gray-300 px-2 py-1 rounded-full"
-                onClick={() => setAdults(adults + 1)}
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-between mb-4">
-            <p className="text-lg">Children</p>
-            <div className="flex items-center space-x-2">
-              <button
-                className="bg-gray-300 px-2 py-1 rounded-full"
-                onClick={() => setChildren(Math.max(0, children - 1))}
-              >
-                -
-              </button>
-              <span>{children}</span>
-              <button
-                className="bg-gray-300 px-2 py-1 rounded-full"
-                onClick={() => setChildren(children + 1)}
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-between mb-4">
-            <p className="text-lg">Pets</p>
-            <div className="flex items-center space-x-2">
-              <button
-                className="bg-gray-300 px-2 py-1 rounded-full"
-                onClick={() => setPets(Math.max(0, pets - 1))}
-              >
-                -
-              </button>
-              <span>{pets}</span>
-              <button
-                className="bg-gray-300 px-2 py-1 rounded-full"
-                onClick={() => setPets(pets + 1)}
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setGuestsPopUp(false)}
-            className="bg-black text-white px-4 py-2 w-full rounded-full mt-4"
-          >
-            Next
-          </button>
-        </div>
+        <GuestSelector
+          guestsPopUp={guestsPopUp}
+          setGuestsPopUp={setGuestsPopUp}
+          adults={adults}
+          setAdults={setAdults}
+          setChildren={setChildren}
+          pets={pets}
+          setPets={setPets}
+        >
+          {children}
+        </GuestSelector>
       )}
 
       <div className="flex justify-between mt-5">
