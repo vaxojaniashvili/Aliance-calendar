@@ -1,4 +1,5 @@
 import { GuestSelectorProps } from "@/app/types";
+import Button from "../../_molecules/Button/Button";
 
 const GuestSelector: React.FC<GuestSelectorProps> = ({
   setGuestsPopUp,
@@ -24,29 +25,29 @@ const GuestSelector: React.FC<GuestSelectorProps> = ({
         <div className="flex justify-between mb-4" key={idx}>
           <p className="text-lg">{type}</p>
           <div className="flex items-center space-x-2">
-            <button
+            <Button
               className="bg-gray-300 px-2 py-1 rounded-full"
               onClick={() => setCount(Math.max(0, count - 1))}
             >
               -
-            </button>
+            </Button>
             <span>{count}</span>
-            <button
+            <Button
               className="bg-gray-300 px-2 py-1 rounded-full"
               onClick={() => setCount(count + 1)}
             >
               +
-            </button>
+            </Button>
           </div>
         </div>
       );
     })}
-    <button
+    <Button
       onClick={() => setGuestsPopUp(false)}
       className="bg-black text-white px-4 py-2 w-full rounded-full mt-4"
     >
       Next
-    </button>
+    </Button>
   </div>
 );
 

@@ -1,5 +1,6 @@
 import { DatePickerProps } from "@/app/types";
 import { months } from "../../_molecules/Months/Months";
+import Button from "../../_molecules/Button/Button";
 
 const DatePicker: React.FC<DatePickerProps> = ({
   setCalendarPopUp,
@@ -21,15 +22,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <div className="mt-5 bg-white rounded-lg shadow-md p-4">
       <div className="flex justify-between mb-4 items-center">
-        <button onClick={handlePrevMonth} className="text-2xl">
+        <Button onClick={handlePrevMonth} className="text-2xl">
           &lt;
-        </button>
+        </Button>
         <p className="text-lg text-center">
           {months[currentMonth]} {currentYear}
         </p>
-        <button onClick={handleNextMonth} className="text-2xl">
+        <Button onClick={handleNextMonth} className="text-2xl">
           &gt;
-        </button>
+        </Button>
       </div>
       <div className="grid grid-cols-7 gap-2 text-center">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, idx) => (
@@ -64,15 +65,15 @@ const DatePicker: React.FC<DatePickerProps> = ({
         ))}
       </div>
       <div className="flex justify-between mb-4">
-        <button onClick={resetDates} className="text-gray-500 underline">
+        <Button onClick={resetDates} className="text-gray-500 underline">
           Reset
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setCalendarPopUp(false)}
           className="bg-black text-white px-4 py-2 rounded-full"
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

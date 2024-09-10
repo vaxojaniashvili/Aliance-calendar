@@ -1,4 +1,5 @@
 "use client";
+import Button from "@/app/components/_molecules/Button/Button";
 import { months } from "@/app/components/_molecules/Months/Months";
 import DatePicker from "@/app/components/_organisms/DatePicker/DatePicker";
 import GuestSelector from "@/app/components/_organisms/GuestSelector/GuestSelector";
@@ -74,14 +75,14 @@ const CalendarPage: React.FC = () => {
     <div className="relative mx-auto w-full max-w-md shadow-lg bg-white p-6 rounded-lg">
       <div className="flex justify-between">
         <p className="text-lg font-medium">When</p>
-        <button
+        <Button
           onClick={() => setCalendarPopUp(!calendarPopUp)}
           className="text-gray-500"
         >
           {selectedStartDate && selectedEndDate
             ? `${selectedStartDate}-${selectedEndDate} ${months[currentMonth]}`
             : "Select Dates"}
-        </button>
+        </Button>
       </div>
 
       {calendarPopUp && (
@@ -104,12 +105,12 @@ const CalendarPage: React.FC = () => {
 
       <div className="flex justify-between mt-5">
         <p className="text-lg font-medium">Guests</p>
-        <button
+        <Button
           onClick={() => setGuestsPopUp(!guestsPopUp)}
           className="text-gray-500"
         >
           {totalGuests > 0 ? `Person: ${totalGuests}` : "Select Guests"}
-        </button>
+        </Button>
       </div>
 
       {guestsPopUp && (
@@ -127,15 +128,15 @@ const CalendarPage: React.FC = () => {
       )}
 
       <div className="flex justify-between mt-5">
-        <button className="text-gray-500 underline" onClick={clearAll}>
+        <Button className="text-gray-500 underline" onClick={clearAll}>
           Clear all
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleRequest}
           className="bg-black text-white px-5 py-3 rounded-full"
         >
           Request
-        </button>
+        </Button>
       </div>
 
       {modalOpen && <Modal closeModal={() => setModalOpen(false)} />}
