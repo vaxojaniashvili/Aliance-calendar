@@ -1,8 +1,6 @@
 "use client";
-
-import DatePicker, {
-  months,
-} from "@/app/components/_organisms/DatePicker/DatePicker";
+import { months } from "@/app/components/_molecules/Months/Months";
+import DatePicker from "@/app/components/_organisms/DatePicker/DatePicker";
 import GuestSelector from "@/app/components/_organisms/GuestSelector/GuestSelector";
 import Modal from "@/app/components/_organisms/Modal/Modal";
 import { useState } from "react";

@@ -1,15 +1,4 @@
-import React from "react";
-
-interface GuestSelectorProps {
-  guestsPopUp: boolean;
-  setGuestsPopUp: React.Dispatch<React.SetStateAction<boolean>>;
-  adults: number;
-  setAdults: React.Dispatch<React.SetStateAction<number>>;
-  children: number;
-  setChildren: React.Dispatch<React.SetStateAction<number>>;
-  pets: number;
-  setPets: React.Dispatch<React.SetStateAction<number>>;
-}
+import { GuestSelectorProps } from "@/app/types";
 
 const GuestSelector: React.FC<GuestSelectorProps> = ({
   setGuestsPopUp,
