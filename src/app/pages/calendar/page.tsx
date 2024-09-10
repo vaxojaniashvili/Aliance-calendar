@@ -1,119 +1,248 @@
 "use client";
-
-import Button from "@/app/components/_molecules/Button/Button";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import Modal from "@/app/components/_organisms/Modal/Modal";
+import { useState } from "react";
 
 const CalendarPage: React.FC = () => {
   const [calendarPopUp, setCalendarPopUp] = useState<boolean>(false);
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [guest, setGuest] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedStartDate, setSelectedStartDate] = useState<number | null>(
+    null
+  );
+  const [selectedEndDate, setSelectedEndDate] = useState<number | null>(null);
+  const [guestsPopUp, setGuestsPopUp] = useState<boolean>(false);
+  const [adults, setAdults] = useState<number>(0);
+  const [children, setChildren] = useState<number>(0);
+  const [pets, setPets] = useState<number>(0);
 
-  useEffect(() => {
-    const datePickerStyles = document.createElement("style");
-    datePickerStyles.innerHTML = `
-      .react-datepicker {
-        width: 100%;
-        border-radius: 12px;
-        border: 1px solid black;
-      }
-      .react-datepicker__month-container {
-        width: 100%;
-      }
-      .react-datepicker__header {
-        background-color: #f3f4f6;
-      }
-      .react-datepicker__day--selected {
-        background-color: black;
-        color: white;
-        border-radius: 100%;
-      }
-      .react-datepicker__day--keyboard-selected {
-        background-color: black;
-        color: white;
-        border-radius: 100%;
-      }
-    `;
-    document.head.appendChild(datePickerStyles);
-  }, []);
+  const [currentMonth, setCurrentMonth] = useState<number>(8);
+  const [currentYear, setCurrentYear] = useState<number>(2024);
 
-  const getFormattedDateRange = (start: Date | null, end: Date | null): string => {
-    if (start && end) {
-      const startFormatted = format(start, "dd");
-      const endFormatted = format(end, "dd");
-      const monthFormatted = format(start, "MMM");
-      return `${monthFormatted} ${startFormatted}-${endFormatted}`;
-    }
-    return "Select dates";
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const daysInMonth = (month: number, year: number) => {
+    return new Date(year, month + 1, 0).getDate();
   };
 
+  const handleDayClick = (day: number) => {
+    if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+      setSelectedStartDate(day);
+      setSelectedEndDate(null);
+    } else if (day > selectedStartDate) {
+      setSelectedEndDate(day);
+    }
+  };
+
+  const resetDates = () => {
+    setSelectedStartDate(null);
+    setSelectedEndDate(null);
+  };
+
+  const clearAll = () => {
+    resetDates();
+    setAdults(0);
+    setChildren(0);
+    setPets(0);
+  };
+
+  const handleRequest = () => {
+    setModalOpen(true);
+  };
+
+  const handlePrevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
+
+  const totalGuests = adults + children + pets;
+
   return (
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-[530px] shadow-2xl">
-      <div className="flex justify-end py-7">
-        <Image
-          height={20}
-          width={20}
-          src={"https://www.svgrepo.com/show/365893/x-thin.svg"}
-          alt={""}
-        />
-      </div>
-      <div className="flex justify-between border-gray-500 border rounded-full mx-6 px-7 py-5">
-        <p className="text-gray-500">When</p>
-        <Button
-          className="cursor-pointer"
+    <div className="relative mx-auto w-full max-w-md shadow-lg bg-white p-6 rounded-lg">
+      <div className="flex justify-between">
+        <p className="text-lg font-medium">When</p>
+        <button
           onClick={() => setCalendarPopUp(!calendarPopUp)}
+          className="text-gray-500"
         >
-          {getFormattedDateRange(startDate, endDate)}
-        </Button>
+          {selectedStartDate && selectedEndDate
+            ? `${selectedStartDate}-${selectedEndDate} ${months[currentMonth]}`
+            : "Select Dates"}
+        </button>
       </div>
 
       {calendarPopUp && (
-        <div className="mt-5 p-4 bg-white rounded-lg  w-full">
-          <DatePicker
-            selected={startDate}
-            onChange={(dates: [Date | null, Date | null]) => {
-              const [start, end] = dates;
-              setStartDate(start);
-              setEndDate(end);
-            }}
-            startDate={startDate}
-            endDate={endDate}
-            selectsRange
-            inline
-            calendarClassName="react-datepicker"
-            dateFormat="MMM dd"
-          />
+        <div className="mt-5 bg-white rounded-lg shadow-md p-4">
+          <div className="flex justify-between mb-4 items-center">
+            <button onClick={handlePrevMonth} className="text-2xl">
+              &lt;
+            </button>
+            <p className="text-lg text-center">
+              {months[currentMonth]} {currentYear}
+            </p>
+            <button onClick={handleNextMonth} className="text-2xl">
+              &gt;
+            </button>
+          </div>
+          <div className="grid grid-cols-7 gap-2 text-center">
+            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, idx) => (
+              <p key={idx} className="text-gray-500">
+                {day}
+              </p>
+            ))}
+            {Array.from(
+              { length: daysInMonth(currentMonth, currentYear) },
+              (_, i) => i + 1
+            ).map((day) => (
+              <div
+                key={day}
+                className={`p-2 text-center cursor-pointer rounded-full 
+                ${
+                  selectedStartDate === day || selectedEndDate === day
+                    ? "bg-black text-white"
+                    : selectedStartDate &&
+                      day > selectedStartDate &&
+                      (!selectedEndDate || day < selectedEndDate)
+                    ? "bg-gray-300"
+                    : "bg-white"
+                }`}
+                onClick={() => handleDayClick(day)}
+              >
+                {day}
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between mb-4">
+            <div className="flex items-center space-x-2">
+              <button className="text-gray-500 underline" onClick={resetDates}>
+                Reset
+              </button>
+            </div>
+            <button
+              onClick={() => setCalendarPopUp(false)}
+              className="bg-black text-white px-4 py-2 rounded-full"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="flex justify-between border-gray-500 border rounded-full mx-6 px-7 py-5 mt-5">
-        <p className="text-gray-500">Guests</p>
-        <Button
-          className="cursor-pointer"
-          onClick={() => setGuest(!guest)}
+      <div className="flex justify-between mt-5">
+        <p className="text-lg font-medium">Guests</p>
+        <button
+          onClick={() => setGuestsPopUp(!guestsPopUp)}
+          className="text-gray-500"
         >
-          Select guests
-        </Button>
+          {totalGuests > 0 ? `Person: ${totalGuests}` : "Select Guests"}
+        </button>
       </div>
-      {guest && (
-        <div>
-          <h1>This is guest page</h1>
+
+      {guestsPopUp && (
+        <div className="mt-5 bg-white rounded-lg shadow-md p-4">
+          <div className="flex justify-between mb-4">
+            <p className="text-lg">Adults</p>
+            <div className="flex items-center space-x-2">
+              <button
+                className="bg-gray-300 px-2 py-1 rounded-full"
+                onClick={() => setAdults(Math.max(0, adults - 1))}
+              >
+                -
+              </button>
+              <span>{adults}</span>
+              <button
+                className="bg-gray-300 px-2 py-1 rounded-full"
+                onClick={() => setAdults(adults + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-between mb-4">
+            <p className="text-lg">Children</p>
+            <div className="flex items-center space-x-2">
+              <button
+                className="bg-gray-300 px-2 py-1 rounded-full"
+                onClick={() => setChildren(Math.max(0, children - 1))}
+              >
+                -
+              </button>
+              <span>{children}</span>
+              <button
+                className="bg-gray-300 px-2 py-1 rounded-full"
+                onClick={() => setChildren(children + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-between mb-4">
+            <p className="text-lg">Pets</p>
+            <div className="flex items-center space-x-2">
+              <button
+                className="bg-gray-300 px-2 py-1 rounded-full"
+                onClick={() => setPets(Math.max(0, pets - 1))}
+              >
+                -
+              </button>
+              <span>{pets}</span>
+              <button
+                className="bg-gray-300 px-2 py-1 rounded-full"
+                onClick={() => setPets(pets + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setGuestsPopUp(false)}
+            className="bg-black text-white px-4 py-2 w-full rounded-full mt-4"
+          >
+            Next
+          </button>
         </div>
       )}
 
-      <div className="flex justify-between mx-5 py-10">
-        <p className="text-gray-500">Clear all</p>
-        <Button
-          onClick={() => alert("Request is sending")}
-          className="px-5 py-3 rounded-full bg-black text-white"
+      <div className="flex justify-between mt-5">
+        <button className="text-gray-500 underline" onClick={clearAll}>
+          Clear all
+        </button>
+        <button
+          onClick={handleRequest}
+          className="bg-black text-white px-5 py-3 rounded-full"
         >
           Request
-        </Button>
+        </button>
       </div>
+
+      {modalOpen && <Modal closeModal={() => setModalOpen(false)} />}
     </div>
   );
 };
