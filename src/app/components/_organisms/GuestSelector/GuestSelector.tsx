@@ -24,16 +24,16 @@ const GuestSelector: React.FC<GuestSelectorProps> = ({
       return (
         <div className="flex justify-between mb-4" key={idx}>
           <p className="text-lg">{type}</p>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center rounded-3xl border py-3 space-x-2">
             <Button
-              className="bg-gray-300 px-2 py-1 rounded-full"
+              className="px-4 rounded-full"
               onClick={() => setCount(Math.max(0, count - 1))}
             >
               -
             </Button>
             <span>{count}</span>
             <Button
-              className="bg-gray-300 px-2 py-1 rounded-full"
+              className="px-4 rounded-full"
               onClick={() => setCount(count + 1)}
             >
               +
@@ -42,12 +42,24 @@ const GuestSelector: React.FC<GuestSelectorProps> = ({
         </div>
       );
     })}
-    <Button
-      onClick={() => setGuestsPopUp(false)}
-      className="bg-black text-white px-4 py-2 w-full rounded-full mt-4"
-    >
-      Next
-    </Button>
+    <div className="flex justify-between items-center">
+      <Button
+        onClick={() => {
+          setAdults(0);
+          setChildren(0);
+          setPets(0);
+        }}
+        className="text-gray-500 underline"
+      >
+        Reset
+      </Button>
+      <Button
+        onClick={() => setGuestsPopUp(false)}
+        className="bg-black text-white px-4 rounded-full py-2 mt-4"
+      >
+        Next
+      </Button>
+    </div>
   </div>
 );
 
